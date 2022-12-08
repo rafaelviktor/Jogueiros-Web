@@ -9,13 +9,13 @@ import Logo from "../assets/logo.jpg"
 const Register = ({ setAuth }) => {
   const [token, setToken] = useState(null);
   const [inputs, setInputs] = useState({
-    user_email: "",
-    user_password: "",
-    user_name: "",
-    celular: "",
+    email: "",
+    senha: "",
+    nome: "",
+    contato: "",
   });
 
-  const { user_email, user_password, user_name, celular } = inputs;
+  let { email, senha, nome, contato } = inputs;
 
   const onChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
@@ -29,8 +29,10 @@ const Register = ({ setAuth }) => {
     e.preventDefault();
     if (token) {
       try {
-        const body = { user_email, user_password, user_name, celular };
-        const response = await fetch("/auth/register", {
+        contato = contato.replace(/\D/g, "")
+        const body = { email, senha, nome, contato };
+        console.log(body)
+        const response = await fetch("/users/registrar", {
           method: "POST",
           headers: {
             "Content-type": "application/json",
@@ -39,13 +41,13 @@ const Register = ({ setAuth }) => {
         });
         const parseRes = await response.json();
   
-        if (parseRes.token) {
-          localStorage.setItem("token", parseRes.token);
+        if (parseRes.result) {
+          localStorage.setItem("token", parseRes.result);
           setAuth(true);
           toast.success("Cadastrado com sucesso");
         } else {
           setAuth(false);
-          toast.error(parseRes);
+          toast.error(parseRes.message);
         }
       } catch (err) {
         console.error(err.message);
@@ -73,10 +75,10 @@ const Register = ({ setAuth }) => {
             <label for="inputName1" className="form-label">Nome completo</label>
             <input
               type="text"
-              name="user_name"
+              name="nome"
               className="form-control"
               maxLength={50}
-              value={user_name}
+              value={nome}
               onChange={(e) => onChange(e)}
               required
             />
@@ -85,10 +87,10 @@ const Register = ({ setAuth }) => {
             <label for="exampleInputEmail1" className="form-label">E-Mail</label>
             <input
               type="email"
-              name="user_email"
+              name="email"
               className="form-control"
               maxLength={50}
-              value={user_email}
+              value={email}
               onChange={(e) => onChange(e)}
               required
             />
@@ -97,13 +99,11 @@ const Register = ({ setAuth }) => {
             <label for="exampleInputPassword1" className="form-label">Celular</label>
             <InputMask
               type="text"
-              name="celular"
+              name="contato"
               className="form-control"
               mask="(99) 99999-9999"
               maskChar=""
-              minLength={15}
-              maxLength={15}
-              value={celular}
+              value={contato}
               onChange={(e) => onChange(e)}
               required
             />
@@ -112,10 +112,10 @@ const Register = ({ setAuth }) => {
             <label for="exampleInputPassword1" className="form-label">Senha</label>
             <input
               type="password"
-              name="user_password"
+              name="senha"
               className="form-control"
               minLength={8}
-              value={user_password}
+              value={senha}
               onChange={(e) => onChange(e)}
               required
             />
